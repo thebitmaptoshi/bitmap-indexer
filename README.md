@@ -200,10 +200,11 @@ Each file contains entries in the format:
 ### Competition Resolution
 When multiple inscriptions claim the same bitmap:
 
-1. **Same Block**: Uses Bitcoin transaction ordering within the block
-2. **Different Timestamps**: If timestamps differ by >500 units, earliest wins
-3. **Close Timestamps**: Uses Blockstream API for precise transaction ordering
-4. **First-is-First**: The inscription that appears first in Bitcoin's transaction order wins
+1. **First-is-First**: The inscription that appears first in Bitcoin's transaction order wins
+2. **Same Block**: Uses Bitcoin transaction ordering within the block
+3. **Different Timestamps**: If timestamps differ by >500 units, earliest wins
+4. **Close Timestamps**: Uses Blockstream API for precise transaction ordering
+
 
 ## Technical Details
 
