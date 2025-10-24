@@ -32,7 +32,7 @@ The Bitmap Indexer scans Bitcoin blocks for bitmap inscriptions (format: `{numbe
 npm install ws dotenv
 ```
 
-3. Create environment file `thebitmaptoshi.env`:
+3. Create environment file `.env`:
 ```env
 GITHUB_TOKEN=your_personal_access_token_here
 ```
