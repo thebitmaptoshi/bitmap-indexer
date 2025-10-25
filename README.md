@@ -1,5 +1,7 @@
 # Bitmap Indexer 🗺️
 
+Work in progress- index is currently running. Will validate vs OCI before sharing code
+
 A real-time Bitcoin bitmap inscription registry and monitoring tool that tracks, validates, and registers bitmap claims on the Bitcoin blockchain.
 
 ## Overview
