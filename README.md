@@ -430,6 +430,11 @@ import {
 - Processing historical blocks for complete registry building
 - Catching up on missed blocks in live monitoring setups
 
+### Sat-Comparator file (Validation of regstries)
+- Allows you to compare local files in directory, in another directory, or online such as Github
+- This function compares the "sat" content of "blocks and outputs any differing blockheights that are registered to differing sats and displays the file it belongs to
+- Use the --help flag for directions on use
+
 ## License
 
 This script is provided as-is for educational and research purposes. Please respect the APIs' terms of service and rate limits.
