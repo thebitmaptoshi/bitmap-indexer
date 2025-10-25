@@ -1,7 +1,9 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 
 import fs from 'fs';
 import path from 'path';
+import https from 'https';
+import http from 'http';
 
 // ANSI color codes for better output readability
 const colors = {
@@ -32,15 +34,23 @@ class SatComparator {
     }
 
     // Load and parse JSON file with flexible property name handling
-    loadFile(filePath, label) {
+    async loadFile(filePath, label) {
         try {
             console.log(`${colors.cyan}Loading ${label}: ${filePath}${colors.reset}`);
             
-            if (!fs.existsSync(filePath)) {
-                throw new Error(`File not found: ${filePath}`);
+            let rawData;
+            
+            // Check if it's a URL (HTTPS or HTTP)
+            if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+                rawData = await this.fetchFromURL(filePath);
+            } else {
+                // Local file
+                if (!fs.existsSync(filePath)) {
+                    throw new Error(`File not found: ${filePath}`);
+                }
+                rawData = fs.readFileSync(filePath, 'utf8');
             }
 
-            const rawData = fs.readFileSync(filePath, 'utf8');
             const jsonData = JSON.parse(rawData);
             
             if (!Array.isArray(jsonData)) {
@@ -73,13 +83,40 @@ class SatComparator {
         }
     }
 
+    // Fetch content from HTTPS/HTTP URLs
+    fetchFromURL(url) {
+        return new Promise((resolve, reject) => {
+            const client = url.startsWith('https://') ? https : http;
+            
+            client.get(url, (res) => {
+                let data = '';
+                
+                // Handle redirects
+                if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    console.log(`${colors.yellow}Following redirect to: ${res.headers.location}${colors.reset}`);
+                    return this.fetchFromURL(res.headers.location).then(resolve).catch(reject);
+                }
+                
+                if (res.statusCode !== 200) {
+                    reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage} for ${url}`));
+                    return;
+                }
+                
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => resolve(data));
+            }).on('error', (error) => {
+                reject(new Error(`Network error fetching ${url}: ${error.message}`));
+            });
+        });
+    }
+
     // Compare the two datasets and identify differences
-    compareFiles(file1Path, file2Path) {
+    async compareFiles(file1Path, file2Path) {
         console.log(`\n${colors.bright}=== SAT COMPARATOR ANALYSIS ===${colors.reset}\n`);
 
         // Load both files
-        this.file1Data = this.loadFile(file1Path, 'File 1');
-        this.file2Data = this.loadFile(file2Path, 'File 2');
+        this.file1Data = await this.loadFile(file1Path, 'File 1');
+        this.file2Data = await this.loadFile(file2Path, 'File 2');
 
         this.stats.file1Count = this.file1Data.size;
         this.stats.file2Count = this.file2Data.size;
@@ -292,14 +329,40 @@ class SatComparator {
 async function main() {
     const args = process.argv.slice(2);
     
+    // Handle --help flag
+    if (args.includes('--help') || args.includes('-h')) {
+        console.log(`${colors.cyan}${colors.bright}SAT COMPARATOR - Compare Bitcoin sat-to-block mapping files${colors.reset}`);
+        console.log(`${colors.dim}Detects conflicts, validates data integrity, and identifies differences between JSON files.${colors.reset}\n`);
+        
+        console.log(`${colors.bright}USAGE:${colors.reset}`);
+        console.log(`  node sat-comparator.mjs <file1.json> <file2.json> [options]\n`);
+        
+        console.log(`${colors.bright}OPTIONS:${colors.reset}`);
+        console.log(`  ${colors.green}--help, -h${colors.reset}          Show this help message`);
+        console.log(`  ${colors.green}--export-report${colors.reset}     Export detailed JSON report`);
+        console.log(`  ${colors.green}--export-csv${colors.reset}        Export differences as CSV`);
+        console.log(`  ${colors.green}--export-all${colors.reset}        Export both report and CSV\n`);
+        
+        console.log(`${colors.bright}EXAMPLES:${colors.reset}`);
+        console.log(`  ${colors.yellow}# Basic comparison${colors.reset}`);
+        console.log(`  node sat-comparator.mjs file1.json file2.json\n`);
+        console.log(`  ${colors.yellow}# Compare with GitHub file${colors.reset}`);
+        console.log(`  node sat-comparator.mjs my-list.json "C:\\path\\to\\github-file.json"\n`);
+        console.log(`  ${colors.yellow}# Compare local file with GitHub URL${colors.reset}`);
+        console.log(`  node sat-comparator.mjs file1.json "https://raw.githubusercontent.com/user/repo/main/file.json"\n`);
+        
+        console.log(`${colors.bright}WHAT IT FINDS:${colors.reset}`);
+        console.log(`  ${colors.red}🚨 Block Conflicts${colors.reset}  - Same block, different sats (critical!)`);
+        console.log(`  ${colors.red}🔴 Sat Conflicts${colors.reset}    - Same sat, different blocks`);
+        console.log(`  ${colors.dim}ℹ️  File-only entries${colors.reset} - Sats that exist in only one file\n`);
+        
+        console.log(`${colors.dim}Supports both "block" and "blockheight" property names automatically.${colors.reset}`);
+        process.exit(0);
+    }
+    
     if (args.length < 2) {
         console.log(`${colors.red}Usage: node sat-comparator.mjs <file1.json> <file2.json> [options]${colors.reset}`);
-        console.log(`${colors.cyan}Options:${colors.reset}`);
-        console.log(`  --export-report     Export detailed JSON report`);
-        console.log(`  --export-csv        Export differences as CSV`);
-        console.log(`  --export-all        Export both report and CSV`);
-        console.log(`\n${colors.cyan}Example:${colors.reset}`);
-        console.log(`  node sat-comparator.mjs your-list.json github-file.json --export-all`);
+        console.log(`${colors.cyan}Use --help for detailed usage information${colors.reset}`);
         process.exit(1);
     }
 
@@ -308,22 +371,26 @@ async function main() {
     const exportReport = args.includes('--export-report') || args.includes('--export-all');
     const exportCSV = args.includes('--export-csv') || args.includes('--export-all');
 
-    // Verify files exist
-    if (!fs.existsSync(file1Path)) {
-        console.error(`${colors.red}Error: File 1 not found: ${file1Path}${colors.reset}`);
-        process.exit(1);
+    // Verify files exist (skip check for URLs)
+    if (!file1Path.startsWith('http://') && !file1Path.startsWith('https://')) {
+        if (!fs.existsSync(file1Path)) {
+            console.error(`${colors.red}Error: File 1 not found: ${file1Path}${colors.reset}`);
+            process.exit(1);
+        }
     }
 
-    if (!fs.existsSync(file2Path)) {
-        console.error(`${colors.red}Error: File 2 not found: ${file2Path}${colors.reset}`);
-        process.exit(1);
+    if (!file2Path.startsWith('http://') && !file2Path.startsWith('https://')) {
+        if (!fs.existsSync(file2Path)) {
+            console.error(`${colors.red}Error: File 2 not found: ${file2Path}${colors.reset}`);
+            process.exit(1);
+        }
     }
 
     try {
         const comparator = new SatComparator();
         
         // Run the comparison
-        comparator.compareFiles(file1Path, file2Path);
+        await comparator.compareFiles(file1Path, file2Path);
         
         // Display results
         comparator.displayResults();
