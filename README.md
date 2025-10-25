@@ -20,6 +20,8 @@ The Bitmap Indexer scans Bitcoin blocks for bitmap inscriptions (format: `{numbe
 - **Enhanced Competition Resolution**: Uses Blockstream API for precise transaction ordering in close timestamp scenarios
 - **Fallback Systems**: Automatic failover to polling mode if WebSocket connections fail
 
+-  **Sat-Comparator File** You can use this to verify one registry vs another fro accuracy and validation. Compares block vs block and reports differing sat3 blocks.
+
 ## Installation
 
 ### Prerequisites
