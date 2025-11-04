@@ -1,0 +1,7 @@
+# Local runtime / secrets
+bitmap.mjs
+thebitmaptoshi.env
+.env
+.env.*
+# optionally ignore local clone folder if nested
+bitmap-indexer/
