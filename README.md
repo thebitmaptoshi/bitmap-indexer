@@ -1,4 +1,4 @@
-# Bitmap Indexer 🗺️
+# Bitmap-Indexer 🗺️
 
 Work in progress- index is currently running. Will validate vs OCI before sharing code
 
