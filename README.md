@@ -1,8 +1,8 @@
 # Bitmap Indexer 🗺️
 
-Work in progress- index is currently running. Will validate vs OCI before sharing code
+**Work in progress** - Index is currently running. Will validate vs OCI before sharing code.
 
-A real-time Bitcoin bitmap inscription registry and monitoring tool that tracks, validates, and registers bitmap claims on the Bitcoin blockchain.
+A real-time Bitcoin bitmap inscription registry and monitoring tool that tracks, validates, and registers bitmap claims on the Bitcoin blockchain with comprehensive validation and conflict resolution utilities.
 
 ## Overview
 
@@ -19,29 +19,239 @@ The Bitmap Indexer scans Bitcoin blocks for bitmap inscriptions (format: `{numbe
 - **Sequential Run Optimization**: Uses local caching for continuous monitoring efficiency
 - **Enhanced Competition Resolution**: Uses Blockstream API for precise transaction ordering in close timestamp scenarios
 - **Fallback Systems**: Automatic failover to polling mode if WebSocket connections fail
-- 
--  **Sat-Comparator File** You can use this to verify one registry vs another for accuracy and validation. Compares block vs block and reports differing sat# blocks.
+- **Registry Validation Suite**: Three specialized tools for comparing, validating, and resolving conflicts between registries
+
+---
+
+## Validation Tools Suite
+
+This repository includes three specialized tools for Bitcoin bitmap registry management and validation:
+
+### 1. sat-comparator.mjs - Registry Validation Tool
+
+**Purpose**: Compare and validate sat-to-block mappings between two registry sources.
+
+**Key Features**:
+- Supports local files, URLs (HTTP/HTTPS), and GitHub raw URLs
+- Flexible property name handling (`"block"` or `"blockheight"`)
+- Detailed conflict categorization (block conflicts, sat conflicts, file-only entries)
+- Export reports in JSON and CSV formats
+- Exit codes for CI/CD integration (0 = identical, 1 = differences found)
+
+**Usage**:
+```bash
+# Basic comparison
+node sat-comparator.mjs file1.json file2.json
+
+# Compare with GitHub URL
+node sat-comparator.mjs local-file.json "https://raw.githubusercontent.com/user/repo/main/file.json"
+
+# Export detailed reports
+node sat-comparator.mjs file1.json file2.json --export-all
+
+# Show help
+node sat-comparator.mjs --help
+```
+
+**Command-Line Options**:
+- `--help, -h` - Show detailed usage information
+- `--export-report` - Export detailed JSON report
+- `--export-csv` - Export differences as CSV
+- `--export-all` - Export both JSON report and CSV
+
+**What It Detects**:
+- 🚨 **Block Conflicts** - Same block, different sats (critical!)
+- 🔴 **Sat Conflicts** - Same sat, different blocks
+- 📄 **File1-only entries** - Sats that exist only in File 1
+- 📄 **File2-only entries** - Sats that exist only in File 2
+
+**Output Example**:
+```
+=== COMPARISON SUMMARY ===
+File 1 entries: 5000
+File 2 entries: 5020
+Conflicts (different blocks): 3
+File 1 only: 15
+File 2 only: 35
+Total differences found: 53
+
+=== CRITICAL DIFFERENCES ===
+
+🚨 BLOCK CONFLICTS (Same block, different sats): 2 total
+  1. Block 12345: File1→Sat 1234567890, File2→Sat 9876543210
+  2. Block 67890: File1→Sat 5555555555, File2→Sat 6666666666
+```
+
+**Programmatic Usage**:
+```javascript
+import { SatComparator } from './sat-comparator.mjs';
+
+const comparator = new SatComparator();
+await comparator.compareFiles(file1Path, file2Path);
+comparator.displayResults();
+
+// Access results
+console.log(comparator.stats);        // Summary statistics
+console.log(comparator.differences);  // Array of differences
+```
+
+---
+
+### 2. validator-public.mjs - Multi-File Registry Validator
+
+**Purpose**: Batch validate all `sat_*.json` files between two GitHub registries with comprehensive conflict reporting.
+
+**Key Features**:
+- Fetches all `sat_*.json` files from both repositories
+- Compares each file pair using `sat-comparator.mjs`
+- Fetches inscription IDs for block conflicts from registry files
+- Generates timestamped comprehensive reports
+- In-memory mode for programmatic access to conflicts
+
+**Configuration** (edit in constructor):
+```javascript
+constructor() {
+    this.repo1Base = 'https://raw.githubusercontent.com/your-org/repo1/main/Registry/';
+    this.repo2Base = 'https://raw.githubusercontent.com/your-org/repo2/main/Registry/';
+    this.repo1ListUrl = 'https://api.github.com/repos/your-org/repo1/contents/Registry';
+    this.repo2ListUrl = 'https://api.github.com/repos/your-org/repo2/contents/Registry';
+}
+```
+
+**Usage**:
+```bash
+# Configure repository URLs in constructor first, then run:
+node validator-public.mjs
+
+# Show help
+node validator-public.mjs --help
+```
+
+**What It Does**:
+1. **Step 1**: Fetches file lists from both GitHub repositories
+2. **Step 2**: Compares each `sat_*.json` file pair
+3. **Step 3**: Fetches inscription IDs for all block conflicts
+4. **Step 4**: Generates comprehensive timestamped report
+
+**Output Files**:
+Creates `sat-comparison-YYYY-MM-DD_HH-MM-SS.txt` with:
+- **Overall Summary**: Total files compared, conflicts found, differences count
+- **Block Conflicts List**: Sorted by block height with inscription IDs from both repos
+- **Critical Issues Section**: Files with conflicts and their inscription IDs
+- **Detailed File-by-File Results**: Complete breakdown of each comparison
+
+**Programmatic Usage**:
+```javascript
+import { RegistryComparator } from './validator-public.mjs';
+
+const comparator = new RegistryComparator();
+const result = await comparator.run();
+
+// Access conflicts in-memory
+console.log(result.conflicts);  // Array of block conflicts
+console.log(result.stats);      // Summary statistics
+```
+
+---
+
+### 3. true-bitmap.mjs - First-is-First Conflict Resolver
+
+**Purpose**: Resolve block conflicts using Bitcoin's First-is-First (FiF) rules with Blockstream API verification.
+
+**Key Features**:
+- Uses Blockstream API for precise Bitcoin transaction ordering
+- Applies First-is-First rules for competition resolution
+- Handles identical inscription IDs with sat validation
+- Generates detailed winner reports with reasoning
+- Includes winning/losing sat numbers in output
+
+**Usage**:
+```bash
+# Run conflict resolution pipeline
+node true-bitmap.mjs
+
+# Show help
+node true-bitmap.mjs --help
+```
+
+**Configuration**:
+Imports `validator.mjs` (or `validator-public.mjs`) for conflict detection. Edit repo URLs in the validator constructor.
+
+**What It Does**:
+1. **Step 1**: Runs validator to detect block conflicts
+2. **Step 2**: Resolves each conflict using Blockstream API
+3. **Step 3**: Applies First-is-First rules for competition
+4. **Step 4**: Generates winner report with detailed reasoning
+
+**Resolution Logic**:
+- **Block Height Comparison**: Earlier inscription block wins
+- **Same Block**: Uses Bitcoin transaction position
+- **Identical Inscription ID**: Validates actual satoshi number
+- **Edge Cases**: Handles unconfirmed transactions and missing data
+
+**Output Files**:
+Creates `true-bitmaps-YYYY-MM-DD_HH-MM-SS.txt` with:
+- Summary statistics (Repo1 wins, Repo2 wins, both match, etc.)
+- Blocks grouped by winner in 4 columns
+- Detailed winner list with inscription IDs, sat numbers, and reasoning
+
+---
+
+## Tool Dependencies
+
+| Tool | Depends On | Purpose |
+|------|------------|---------|
+| `sat-comparator.mjs` | None | Standalone comparison utility |
+| `validator-public.mjs` | `sat-comparator.mjs` | Batch file validation |
+| `true-bitmap.mjs` | `validator.mjs` or `validator-public.mjs` | FiF conflict resolution |
+
+---
+
+## Complete Registry Validation Pipeline
+
+**Recommended Workflow**:
+
+```bash
+# Step 1: Compare individual sat files (optional)
+node sat-comparator.mjs sat_file1.json sat_file2.json --export-all
+
+# Step 2: Validate entire registry (configure repos first)
+node validator-public.mjs
+
+# Step 3: Resolve conflicts with FiF rules
+node true-bitmap.mjs
+```
+
+**This pipeline ensures**:
+- ✅ Individual file accuracy
+- ✅ Complete registry validation
+- ✅ True winner determination via Bitcoin FiF rules
+
+---
 
 ## Installation
 
 ### Prerequisites
 - Node.js (version 14 or higher)
 - npm or yarn package manager
-- GitHub Personal Access Token with repository write permissions
+- GitHub Personal Access Token with repository write permissions (for bitmap indexer only)
 
 ### Setup
-1. Clone or download the script
+1. Clone or download the scripts
 2. Install dependencies:
+
 ```bash
 npm install ws dotenv
 ```
 
-3. Create environment file `.env`:
-```env
+3. For bitmap indexer: Create environment file `.env`:
+
+```
 GITHUB_TOKEN=your_personal_access_token_here
 ```
 
-4. Configure GitHub repository settings in the script (edit the `GITHUB_CONFIG` object):
+4. Configure GitHub repository settings (edit the `GITHUB_CONFIG` object in bitmap.mjs):
+
 ```javascript
 const GITHUB_CONFIG = {
     token: process.env.GITHUB_TOKEN,
@@ -52,15 +262,19 @@ const GITHUB_CONFIG = {
 };
 ```
 
-5. Make the script executable (Unix/Linux/macOS):
+5. Make scripts executable (Unix/Linux/macOS):
+
 ```bash
-chmod +x bitmap.mjs
+chmod +x bitmap.mjs sat-comparator.mjs validator-public.mjs true-bitmap.mjs
 ```
 
-## Usage
+---
+
+## Bitmap Indexer Usage
 
 ### Live Monitoring Mode
 Monitor new blocks as they are mined for bitmap inscriptions:
+
 ```bash
 node bitmap.mjs
 ```
@@ -71,6 +285,7 @@ or
 
 ### Single Block Analysis
 Analyze a specific block for bitmap inscriptions:
+
 ```bash
 node bitmap.mjs <block_height>
 ```
@@ -82,6 +297,7 @@ node bitmap.mjs 820000
 
 ### Read-Only Mode
 Analyze all bitmap inscriptions without any registry operations:
+
 ```bash
 node bitmap.mjs <block_height> --read
 ```
@@ -91,7 +307,7 @@ Example:
 node bitmap.mjs 820000 --read
 ```
 
-**Read-Only Mode Features:**
+**Read-Only Mode Features**:
 - No GitHub token required
 - No registry initialization or GitHub operations
 - No competition resolution (shows all bitmap attempts)
@@ -100,6 +316,7 @@ node bitmap.mjs 820000 --read
 
 ### Historical Range Monitoring
 Start monitoring from a specific block height:
+
 ```bash
 node bitmap.mjs --start-height <block_height>
 ```
@@ -111,15 +328,19 @@ node bitmap.mjs --start-height 820000
 
 ### Debug Mode
 Enable detailed logging and metadata output:
+
 ```bash
 node bitmap.mjs --debug
 ```
 
 ### Custom Configuration
 Specify custom registry folder and GitHub repository:
+
 ```bash
 node bitmap.mjs --registry-folder ./custom-registry --github-repo username/repo-name
 ```
+
+---
 
 ## Output Format
 
@@ -166,9 +387,12 @@ Getting Bitcoin tx data for abc123...i0 (tx: abc123...)
 
 ### Status Logging
 Regular status updates show monitoring progress:
+
 ```
 [2024-01-15T10:30:00.000Z] [INFO] STATUS: Uptime 15m, Blocks: 5, Inscriptions: 42, Last Block: 820125
 ```
+
+---
 
 ## Registry Structure
 
@@ -179,8 +403,9 @@ The system creates registry files organized by block height ranges:
 - etc.
 
 Each file contains entries in the format:
+
 ```json
-[{"block": 12345,"iD": "abc123def456...i0","sat": 1234567890123456}]
+[{"block": 12345, "iD": "abc123def456...i0", "sat": 1234567890123456}]
 ```
 
 ### Sat Lookup Files
@@ -189,9 +414,12 @@ Reverse lookup files for finding which block a sat belongs to:
 - Format: `sat_{min_sat}-{max_sat}.json`
 
 Each file contains entries in the format:
+
 ```json
-[{"sat": 1234567890123456,"block": 12345}]
+[{"sat": 1234567890123456, "block": 12345}]
 ```
+
+---
 
 ## Bitmap Validation Rules
 
@@ -209,6 +437,7 @@ When multiple inscriptions claim the same bitmap:
 3. **Different Timestamps**: If timestamps differ by >500 units, earliest wins
 4. **Close Timestamps**: Uses Blockstream API for precise transaction ordering
 
+---
 
 ## Technical Details
 
@@ -232,7 +461,9 @@ When multiple inscriptions claim the same bitmap:
 - **Batch Processing**: Processes inscriptions in configurable batches
 - **Rate Limiting**: Respects API rate limits with automatic delays
 - **Memory Efficiency**: Streams data processing with minimal memory footprint
-- **Read-Only Optimization**: Skips registry operations for faster execution of specific block details only, no competiotion resolution or registry validation
+- **Read-Only Optimization**: Skips registry operations for faster execution
+
+---
 
 ## API Endpoints Used
 
@@ -247,11 +478,14 @@ When multiple inscriptions claim the same bitmap:
 | blockstream.info | `https://blockstream.info/api/block/{hash}/txids` | Block transaction ordering |
 | GitHub API | `https://api.github.com/repos/{owner}/{repo}/contents/*` | Registry storage |
 
+---
+
 ## Configuration
 
 ### Environment Variables
-```env
-GITHUB_TOKEN=your_personal_access_token  # Not required for --read mode
+
+```
+GITHUB_TOKEN=your_personal_access_token  # Not required for --read mode or validation tools
 BLOCKSTREAM_API_URL=https://blockstream.info/api  # Optional, defaults to blockstream.info
 ```
 
@@ -266,7 +500,11 @@ BLOCKSTREAM_API_URL=https://blockstream.info/api  # Optional, defaults to blocks
 - **Rate Limiting**: Automatic delays and retry-after header respect
 - **GitHub Delays**: 200-300ms between pushes (can be reduced significantly once your repo is up to date)
 
+---
+
 ## Command Line Arguments
+
+### Bitmap Indexer
 
 | Argument | Description | Example | Compatible Modes |
 |----------|-------------|---------|------------------|
@@ -283,9 +521,12 @@ BLOCKSTREAM_API_URL=https://blockstream.info/api  # Optional, defaults to blocks
 - `--read` flag **cannot** be used with `--start-height` or live monitoring
 - Read-only mode bypasses all GitHub operations and registry management
 
+---
+
 ## Operation Modes
 
 ### 1. Live Monitoring Mode
+
 ```bash
 node bitmap.mjs
 ```
@@ -295,6 +536,7 @@ node bitmap.mjs
 - Requires GitHub token
 
 ### 2. Single Block Mode
+
 ```bash
 node bitmap.mjs 792435
 ```
@@ -304,6 +546,7 @@ node bitmap.mjs 792435
 - Requires GitHub token
 
 ### 3. Read-Only Mode
+
 ```bash
 node bitmap.mjs 792435 --read
 ```
@@ -313,6 +556,7 @@ node bitmap.mjs 792435 --read
 - Perfect for exploration and analysis
 
 ### 4. Historical Range Mode
+
 ```bash
 node bitmap.mjs --start-height 792435
 ```
@@ -320,7 +564,9 @@ node bitmap.mjs --start-height 792435
 - Full GitHub integration and registry management
 - Competition resolution with first-is-first rules
 - Requires GitHub token
-- This specific block will get you the full history of bitmaps from genesis block 792435 to current and then continue live monitoring from there
+- Block 792435 = genesis block for bitmaps
+
+---
 
 ## Troubleshooting
 
@@ -350,11 +596,18 @@ node bitmap.mjs --start-height 792435
 - Bitmap validation processes all text/plain inscriptions
 - Monitor system resources during operation
 
+**Validation Tool Errors**
+- Ensure repository URLs are correct in validator configuration
+- Check network connectivity for GitHub API access
+- Verify sat_*.json files exist in specified paths
+
 ### Debug Mode
 Enable comprehensive debugging:
+
 ```bash
 node bitmap.mjs --debug
 node bitmap.mjs 792435 --read --debug
+node sat-comparator.mjs file1.json file2.json --debug
 ```
 
 Provides:
@@ -369,7 +622,11 @@ Provides:
 - **WARN**: Non-critical issues (e.g., API rate limits, missing data)
 - **ERROR**: Critical failures requiring attention
 
+---
+
 ## Module Exports
+
+### Bitmap Indexer
 
 The script can be imported as a module:
 
@@ -386,8 +643,7 @@ import {
 } from './bitmap.mjs';
 ```
 
-### Key Exported Functions
-
+**Key Exported Functions**:
 - `processBlockForBitmaps(blockHeight, isLiveMode)` - Process a single block for bitmap inscriptions
 - `validateBitmapContent(content, currentBlockHeight)` - Validate bitmap format and constraints
 - `isBitmapRegistered(blockHeight)` - Check if a bitmap is already registered
@@ -395,6 +651,16 @@ import {
 - `initializeBitmapRegistry(currentBlock)` - Initialize registry cache and GitHub sync
 - `startLiveMonitoring()` - Begin real-time monitoring
 - `startFromHeight(startHeight)` - Begin monitoring from specific block
+
+### Validation Tools
+
+```javascript
+import { SatComparator } from './sat-comparator.mjs';
+import { RegistryComparator } from './validator-public.mjs';
+import { TrueBitmapResolver } from './true-bitmap.mjs';
+```
+
+---
 
 ## Registry Integrity
 
@@ -413,6 +679,8 @@ import {
 - Format validation for all bitmap content
 - Block height and timestamp consistency checks
 
+---
+
 ## Use Cases
 
 ### Registry Management (Normal Mode)
@@ -430,23 +698,33 @@ import {
 - Processing historical blocks for complete registry building
 - Catching up on missed blocks in live monitoring setups
 
-### Sat-Comparator file (Validation of regstries)
-- Allows you to compare local files in directory, in another directory, or online such as Github
-- This function compares the "sat" content of "blocks and outputs any differing blockheights that are registered to differing sats and displays the file it belongs to
-- Use the --help flag for directions on use
+### Registry Validation (Validation Tools)
+- Comparing registries from different sources
+- Detecting conflicts and data integrity issues
+- Resolving disputed bitmap claims using Bitcoin FiF rules
+- Auditing registry accuracy across repositories
+
+---
 
 ## License
 
 This script is provided as-is for educational and research purposes. Please respect the APIs' terms of service and rate limits.
 
+---
+
 ## Contributing
 
-Feel free to submit issues, feature requests, or improvements. The script is designed to be modular and extensible.
+Feel free to submit issues, feature requests, or improvements. The scripts are designed to be modular and extensible.
+
+---
 
 ## Disclaimer
 
 This tool is for informational purposes only. This script provides a best-effort real-time view based on first-is-first principles. Always verify critical information through multiple sources.
 
+---
+
 ## Version History
 
-- **v1.0**: Historical and LIVE Bitmap monitoring with enhanced competition resolution, GitHub integration, and sequential run optimization under multilpe modes and conditional flags
+- **v1.0**: Historical and LIVE Bitmap monitoring with enhanced competition resolution, GitHub integration, and sequential run optimization under multiple modes and conditional flags
+- **v1.1**: Added comprehensive validation tools suite (sat-comparator, validator-public, true-bitmap) for registry conflict detection and resolution
