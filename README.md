@@ -79,7 +79,7 @@ Total differences found: 53
 
 🚨 BLOCK CONFLICTS (Same block, different sats): 2 total
   1. Block 12345: File1→Sat 1234567890, File2→Sat 9876543210
-  2. Block 67890: File1→Sat 5555555555, File2→Sat 6666666666
+  2. Block 67890: File1→Sat 5555555555, File2→Sat 6942069420
 ```
 
 **Programmatic Usage**:
@@ -97,7 +97,7 @@ console.log(comparator.differences);  // Array of differences
 
 ---
 
-### 2. validator-public.mjs - Multi-File Registry Validator
+### 2. validator.mjs - Multi-File Registry Validator
 
 **Purpose**: Batch validate all `sat_*.json` files between two GitHub registries with comprehensive conflict reporting.
 
@@ -121,10 +121,10 @@ constructor() {
 **Usage**:
 ```bash
 # Configure repository URLs in constructor first, then run:
-node validator-public.mjs
+node validator.mjs
 
 # Show help
-node validator-public.mjs --help
+node validator.mjs --help
 ```
 
 **What It Does**:
@@ -142,7 +142,7 @@ Creates `sat-comparison-YYYY-MM-DD_HH-MM-SS.txt` with:
 
 **Programmatic Usage**:
 ```javascript
-import { RegistryComparator } from './validator-public.mjs';
+import { RegistryComparator } from './validator.mjs';
 
 const comparator = new RegistryComparator();
 const result = await comparator.run();
@@ -175,7 +175,7 @@ node true-bitmap.mjs --help
 ```
 
 **Configuration**:
-Imports `validator.mjs` (or `validator-public.mjs`) for conflict detection. Edit repo URLs in the validator constructor.
+Imports `validator.mjs` for conflict detection. Edit repo URLs in the validator constructor.
 
 **What It Does**:
 1. **Step 1**: Runs validator to detect block conflicts
@@ -202,8 +202,8 @@ Creates `true-bitmaps-YYYY-MM-DD_HH-MM-SS.txt` with:
 | Tool | Depends On | Purpose |
 |------|------------|---------|
 | `sat-comparator.mjs` | None | Standalone comparison utility |
-| `validator-public.mjs` | `sat-comparator.mjs` | Batch file validation |
-| `true-bitmap.mjs` | `validator.mjs` or `validator-public.mjs` | FiF conflict resolution |
+| `validator.mjs` | `sat-comparator.mjs` | Batch file validation |
+| `true-bitmap.mjs` | `validator.mjs` | FiF conflict resolution |
 
 ---
 
@@ -216,7 +216,7 @@ Creates `true-bitmaps-YYYY-MM-DD_HH-MM-SS.txt` with:
 node sat-comparator.mjs sat_file1.json sat_file2.json --export-all
 
 # Step 2: Validate entire registry (configure repos first)
-node validator-public.mjs
+node validator.mjs
 
 # Step 3: Resolve conflicts with FiF rules
 node true-bitmap.mjs
@@ -265,7 +265,7 @@ const GITHUB_CONFIG = {
 5. Make scripts executable (Unix/Linux/macOS):
 
 ```bash
-chmod +x bitmap.mjs sat-comparator.mjs validator-public.mjs true-bitmap.mjs
+chmod +x bitmap.mjs sat-comparator.mjs validator.mjs true-bitmap.mjs
 ```
 
 ---
@@ -656,7 +656,7 @@ import {
 
 ```javascript
 import { SatComparator } from './sat-comparator.mjs';
-import { RegistryComparator } from './validator-public.mjs';
+import { RegistryComparator } from './validator.mjs';
 import { TrueBitmapResolver } from './true-bitmap.mjs';
 ```
 
@@ -727,4 +727,4 @@ This tool is for informational purposes only. This script provides a best-effort
 ## Version History
 
 - **v1.0**: Historical and LIVE Bitmap monitoring with enhanced competition resolution, GitHub integration, and sequential run optimization under multiple modes and conditional flags
-- **v1.1**: Added comprehensive validation tools suite (sat-comparator, validator-public, true-bitmap) for registry conflict detection and resolution
+- **v1.1**: Added comprehensive validation tools suite (sat-comparator, validator, true-bitmap) for registry conflict detection and resolution
