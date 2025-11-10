@@ -39,7 +39,7 @@ class RegistryComparator {
     constructor() {
     this.repo1Base = 'https://raw.githubusercontent.com/your-org/repo1/main/Registry/';  //Repalce "your_org" with your repo org name
     this.repo2Base = 'https://raw.githubusercontent.com/your-org/repo2/main/Registry/';
-    this.repo1ListUrl = 'https://api.github.com/repos/your-org/repo1/contents/Registry'; // Replace "repo1" or "repo2" with the repo names for comparison"
+    this.repo1ListUrl = 'https://api.github.com/repos/your-org/repo1/contents/Registry'; // Replace "repo1" or "repo2" with the repo names for comparison
     this.repo2ListUrl = 'https://api.github.com/repos/your-org/repo2/contents/Registry';
     this.results = [];
     this.registryCache = new Map(); // Cache for registry files
@@ -538,4 +538,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 // Export class for module usage
 export { RegistryComparator };
+
 
