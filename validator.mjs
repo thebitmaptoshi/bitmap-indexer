@@ -37,13 +37,13 @@ const colors = {
 
 class RegistryComparator {
     constructor() {
-        this.repo1Base = 'your_JSON_format_file_location_1'; // Replace with URL or local path for example
-        this.repo2Base = 'your_JSON_format_file_location_2'; // Replace with URL or local path for example 2
-        this.repo1ListUrl = 'if_repo1_list_url'; 
-        this.repo2ListUrl = 'if_repo2_list_url';  // Replace with URL to list files in repo 1, e.g. https://api.github.com/repos/...
-        this.results = [];
-        this.registryCache = new Map(); // Cache for registry files
-    }
+    this.repo1Base = 'https://raw.githubusercontent.com/your-org/repo1/main/Registry/';  //Repalce "your_org" with your repo org name
+    this.repo2Base = 'https://raw.githubusercontent.com/your-org/repo2/main/Registry/';
+    this.repo1ListUrl = 'https://api.github.com/repos/your-org/repo1/contents/Registry'; // Replace "repo1" or "repo2" with the repo names for comparison"
+    this.repo2ListUrl = 'https://api.github.com/repos/your-org/repo2/contents/Registry';
+    this.results = [];
+    this.registryCache = new Map(); // Cache for registry files
+}
 
     // Fetch JSON from URL
     async fetchJSON(url) {
@@ -538,3 +538,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 // Export class for module usage
 export { RegistryComparator };
+
