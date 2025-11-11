@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+/* A script to validate the true FiF winner of conflicting bitmap
+registries. Uses Blockstream API to get transaction and block data to
+determine bitcoin txn ordering for true First-is-First resolution based
+on the associated repo's sat to block and block to inscriptionID mappings.
+Expects JSON formatted repos with "sat", "block"/"blockheight",
+"iD"/"inscriptionID" fields for validation. Uses validator.mjs to run a
+full comparison between repos inline of that script. This script outputs
+a detailed log of the resolution process and a final report of winners.*/
+
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
@@ -751,3 +760,4 @@ main().catch(error => {
     console.error(error.stack);
     process.exit(1);
 });
+
