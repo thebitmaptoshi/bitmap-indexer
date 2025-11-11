@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+/* A script to compare the bitmap blockheight and sat association between
+multiple different files and file sources. Expects a JSON array with "sat"
+and "block"/"blockheight" data for a valid source. Compares file1 vs file2
+to determine differences by sat-to-block association and vice versa. Logs
+the differences in sats found in individual files or sats associated with 
+multiple blocks. Find the diffs and compare the data, can be used with
+validator.mjs to run large repos/directories and output reports. */
+    
+
 import fs from 'fs';
 import path from 'path';
 import https from 'https';
@@ -426,3 +435,4 @@ main().catch(error => {
 });
 
 export { SatComparator };
+
