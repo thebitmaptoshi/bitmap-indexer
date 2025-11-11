@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 
 import https from 'https';
 import fs from 'fs';
@@ -37,12 +37,13 @@ const colors = {
 
 class RegistryComparator {
     constructor() {
-    this.repo1Base = 'https://raw.githubusercontent.com/your-org/repo1/main/Registry/';  //Repalce "your_org" with your repo org name
-    this.repo2Base = 'https://raw.githubusercontent.com/your-org/repo2/main/Registry/';
-    this.repo1ListUrl = 'https://api.github.com/repos/your-org/repo1/contents/Registry'; // Replace "repo1" or "repo2" with the repo names for comparison
-    this.repo2ListUrl = 'https://api.github.com/repos/your-org/repo2/contents/Registry';
-    this.results = [];
-    this.registryCache = new Map(); // Cache for registry files
+        this.repo1Base = 'https://raw.githubusercontent.com/your-org/repo1/main/Registry/';  //Repalce "your_org" with your repo org name
+        this.repo2Base = 'https://raw.githubusercontent.com/your-org/repo2/main/Registry/';
+        this.repo1ListUrl = 'https://api.github.com/repos/your-org/repo1/contents/Registry'; // Replace "repo1" or "repo2" with the repo names for comparison"
+        this.repo2ListUrl = 'https://api.github.com/repos/your-org/repo2/contents/Registry';
+        this.results = [];
+        this.registryCache = new Map();
+        this.suppressFileOutput = options.suppressFileOutput || false; // Control file output
 }
 
     // Fetch JSON from URL
@@ -464,18 +465,24 @@ class RegistryComparator {
                 await this.compareFilePair(filesToCompare[i], i, filesToCompare.length);
             }
 
-            // Generate and save report
+            // Generate report (but conditionally save to file)
             console.log(`\n${colors.bright}Step 3: Generating report...${colors.reset}`);
             const { report, filename } = await this.generateReport();
-            
-            const outputPath = path.join(__dirname, filename);
-            fs.writeFileSync(outputPath, report, 'utf8');
 
-            console.log(`\n${colors.green}${colors.bright}✅ VALIDATION COMPLETE${colors.reset}`);
-            console.log(`${colors.green}📄 Report saved to: ${filename}${colors.reset}`);
-            console.log(`${colors.dim}   Full path: ${outputPath}${colors.reset}\n`);
+            // Only write to file if not suppressed
+            if (!this.suppressFileOutput) {
+                const outputPath = path.join(__dirname, filename);
+                fs.writeFileSync(outputPath, report, 'utf8');
 
-            // Summary
+                console.log(`\n${colors.green}${colors.bright}✅ VALIDATION COMPLETE${colors.reset}`);
+                console.log(`${colors.green}📄 Report saved to: ${filename}${colors.reset}`);
+                console.log(`${colors.dim}   Full path: ${outputPath}${colors.reset}\n`);
+            } else {
+                console.log(`\n${colors.green}${colors.bright}✅ VALIDATION COMPLETE${colors.reset}`);
+                console.log(`${colors.dim}   Report file output suppressed (in-memory mode)${colors.reset}\n`);
+            }
+
+            // Summary (always show)
             const filesWithDiffs = this.results.filter(r => r.hasDifferences).length;
             if (filesWithDiffs > 0) {
                 console.log(`${colors.yellow}⚠️  ${filesWithDiffs} file(s) had differences${colors.reset}`);
@@ -538,5 +545,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 // Export class for module usage
 export { RegistryComparator };
-
-
