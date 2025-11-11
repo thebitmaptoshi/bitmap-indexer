@@ -5,7 +5,7 @@ and allows you to compare teh "sat_n-n.json" files so that you can verify if the
 numbers match their respective blocks/blockheights. It will output a list of blocks 
 with different sats, vice verse, as well as sats not found in the other file. It uses
 the sat-cmparator.mjs script to run full repos, use the sat-comparator for individual
-file comparison. Can be used with true-bitmap.mjs to fetermine the actual true state. */
+file comparison. Can be used with true-bitmap.mjs to determine the actual true state. */
 
 import https from 'https';
 import fs from 'fs';
@@ -552,4 +552,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 // Export class for module usage
 export { RegistryComparator };
+
 
