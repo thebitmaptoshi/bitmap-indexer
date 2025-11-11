@@ -3,7 +3,7 @@
 /* This script allows you to plug in any 2 .json file sources, mostly gtihub repos
 and allows you to compare the "sat_n-n.json" files so that you can verify if the sat
 numbers match their respective blocks/blockheights. It will output a list of blocks 
-with different sats, vice verse, as well as sats not found in the other file. It uses
+with different sats, vice versa, as well as sats not found in the other file. It uses
 the sat-comparator.mjs script to run full repos, use the sat-comparator for individual
 file comparison. Can be used with true-bitmap.mjs to determine the actual true state. */
 
@@ -552,6 +552,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
 // Export class for module usage
 export { RegistryComparator };
+
 
 
 
