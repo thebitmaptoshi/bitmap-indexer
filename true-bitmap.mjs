@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 
 import https from 'https';
 import fs from 'fs';
@@ -651,7 +651,20 @@ class TrueBitmapResolver {
         try {
             // Step 1: Run validator to get conflicts
             console.log(`${colors.bright}Step 1: Running registry validator...${colors.reset}`);
-            const comparator = new RegistryComparator();
+
+            // Check if --log flag is present in command line args
+            const args = process.argv.slice(2);
+            const enableValidatorOutput = args.includes('--log');
+
+            // Pass suppressFileOutput option to validator (inverse of --log flag)
+            const comparator = new RegistryComparator({ 
+                suppressFileOutput: !enableValidatorOutput 
+            });
+
+            if (!enableValidatorOutput) {
+                console.log(`${colors.dim}  (Validator file output suppressed - use --log flag to enable)${colors.reset}`);
+            }
+
             const validatorResult = await comparator.run();
             
             const conflicts = validatorResult.conflicts || [];
@@ -714,6 +727,8 @@ async function main() {
         console.log(`${colors.dim}In-memory FiF conflict resolution pipeline${colors.reset}\n`);
         console.log(`${colors.bright}USAGE:${colors.reset}`);
         console.log(`  node true-bitmap.mjs\n`);
+        console.log(`${colors.bright}OPTIONS:${colors.reset}`);
+        console.log(`  --log    Enable validator.mjs file output (default: suppressed)\n`);
         console.log(`${colors.bright}WHAT IT DOES:${colors.reset}`);
         console.log(`  1. Runs validator.mjs to detect conflicts`);
         console.log(`  2. Resolves conflicts using Blockstream API`);
@@ -721,6 +736,7 @@ async function main() {
         console.log(`  4. Generates winner report\n`);
         console.log(`${colors.bright}OUTPUT:${colors.reset}`);
         console.log(`  true-bitmaps-YYYY-MM-DD_HH-MM-SS.txt\n`);
+        console.log(`  sat-comparison-YYYY-MM-DD_HH-MM-SS.txt (only with --log)\n`);
         console.log(`${colors.bright}CONFIGURE:${colors.reset}`);
         console.log(`  Edit repo URLs in validator.mjs constructor\n`);
         process.exit(0);
