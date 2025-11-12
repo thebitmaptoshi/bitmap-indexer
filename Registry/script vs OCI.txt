@@ -2,14 +2,14 @@
     TRUE BITMAP WINNERS - FIRST-IS-FIRST RESOLUTION
 ════════════════════════════════════════════════════════════════════════════════
 
-Generated: 2025-11-10T20:36:33.213Z
+Generated: 2025-11-12T23:01:09.394Z
 Total Conflicts Resolved: 75
 
 ────────────────────────────────────────────────────────────────────────────────
   SUMMARY
 ────────────────────────────────────────────────────────────────────────────────
-Repo1 Wins: 75  - thebitmaptoshi/bitmap-indexer
-Repo2 Wins: 0	- Zmakin/BNS  -- OCI clone
+Repo1 Wins: 75
+Repo2 Wins: 0
 Both Match: 0
 Neither Found: 0
 Unknown: 0
@@ -500,5 +500,6 @@ NEITHER/UNKNOWN: None
      Reason: Inscribed in block 795075 (before block 795078)
 
 ════════════════════════════════════════════════════════════════════════════════
-Timestamp: 2025-11-10T20:36:33.213Z
+Report: True Bitmap Resolver
+Timestamp: 2025-11-12T23:01:09.394Z
 ════════════════════════════════════════════════════════════════════════════════
