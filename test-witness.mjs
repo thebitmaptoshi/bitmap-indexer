@@ -1,4 +1,10 @@
 ﻿#!/usr/bin/env node
+
+/* This script can be used to get the witness data output for an input inscription.
+It is used by removing the "i#" from your incsription ID, usually "...i0". Will return
+a report including any content, and type if available, including non-sense data. Used
+to validate the data when ord returns content_type=null or empty content with length > 0. */
+
 import https from 'https';
 import { config } from 'dotenv';
 
@@ -291,4 +297,5 @@ testInscription(inscriptionId).then(() => {
     console.error(`\n❌ Fatal error: ${error.message}`);
     console.error(error.stack);
     process.exit(1);
+
 });
