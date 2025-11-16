@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 /* A script to validate the true FiF winner of conflicting bitmap
 registries. Uses Blockstream API to get transaction and block data to
@@ -760,4 +760,3 @@ main().catch(error => {
     console.error(error.stack);
     process.exit(1);
 });
-
