@@ -1,0 +1,505 @@
+════════════════════════════════════════════════════════════════════════════════
+    TRUE BITMAP WINNERS - FIRST-IS-FIRST RESOLUTION
+════════════════════════════════════════════════════════════════════════════════
+
+Generated: 2025-11-21T13:34:10.297Z
+Total Conflicts Resolved: 75
+
+────────────────────────────────────────────────────────────────────────────────
+  SUMMARY
+────────────────────────────────────────────────────────────────────────────────
+Repo1 Wins: 75
+Repo2 Wins: 0
+Both Match: 0
+Neither Found: 0
+Unknown: 0
+
+────────────────────────────────────────────────────────────────────────────────
+  BLOCKS BY WINNER (4 COLUMNS)
+────────────────────────────────────────────────────────────────────────────────
+
+REPO1 WINS (75 blocks):
+  20923             465536            516485            535466
+  35572             466535            517484            536465
+  60644             467534            518483            537464
+  80109             468533            519482            538463
+  81031             470531            520481            539462
+  81101             471530            521480            540461
+  90196             472529            522479            541460
+  317189            473528            523478            542459
+  322948            474527            524477            543458
+  323293            475526            525476            544457
+  436554            476525            526475            545456
+  456545            477524            527474            565967
+  457544            478523            528473            586558
+  458543            479522            529472            593080
+  460541            480521            530471            637087
+  461540            481520            531470            682460
+  462539            482519            532469            710811
+  463538            483518            533468            712003
+  464537            484517            534467
+
+REPO2 WINS: None
+
+BOTH MATCH: None
+
+NEITHER/UNKNOWN: None
+
+────────────────────────────────────────────────────────────────────────────────
+  WINNERS BY BLOCK HEIGHT
+────────────────────────────────────────────────────────────────────────────────
+
+  1. Block 20923:
+     Winner: REPO1
+     ID: f7264076806aa0cdbd84a482a3b151d28a600834d6a091fb5af24855a6e3c06fi0
+     Sats: 641932685282790 (winner) > 641932685286218 (loser)
+     Reason: Same block 794440, tx position 2221 before 2236
+
+  2. Block 35572:
+     Winner: REPO1
+     ID: 4a39b596af12eef72e30c6e93432423e5f060ff56f66a11f482ea7307a81601di0
+     Sats: 1211139327075108 (winner) > 1212523144882289 (loser)
+     Reason: Inscribed in block 795141 (before block 795143)
+
+  3. Block 60644:
+     Winner: REPO1
+     ID: 025bc3039334079726e8c65c541934a7d5e1f837b11a8e1d4edf75df5ee7b23fi0
+     Sats: 1031253741602870 (winner) > 1031253741622870 (loser)
+     Reason: Inscribed in block 794964 (before block 795099)
+
+  4. Block 80109:
+     Winner: REPO1
+     ID: ec7dbdc13e4e62336434a1a9ee30b7c8ec9c5e36858f62e6af73c24956ea0d3ai0
+     Sats: 1321750312343365 (winner) > 1321750312353365 (loser)
+     Reason: Inscribed in block 794663 (before block 794667)
+
+  5. Block 81031:
+     Winner: REPO1
+     ID: ca6df31e4fb6339cea503a8fb80bba474fcad99bfbbda33bdc3672872ae848eai0
+     Sats: 1254356358519929 (winner) > 1258117420510993 (loser)
+     Reason: Inscribed in block 794697 (before block 794717)
+
+  6. Block 81101:
+     Winner: REPO1
+     ID: 03a4ef320bdbe5b386a32431051127b9c75d1bb689138963ee364ce79815861ei0
+     Sats: 1404828874598913 (winner) > 1404828874616913 (loser)
+     Reason: Inscribed in block 794759 (before block 794765)
+
+  7. Block 90196:
+     Winner: REPO1
+     ID: aded94573364333a3034d3f1716dc0f160218fd47caae4c73447b6b2334d5ad7i0
+     Sats: 1831114621974537 (winner) > 1831114621958537 (loser)
+     Reason: Same block 794737, tx position 1829 before 1971
+
+  8. Block 317189:
+     Winner: REPO1
+     ID: 0a739e0be3f0e06ff35a7741144ceffd3f78686d1b3920bd14a902149ec02c62i0
+     Sats: 1398958719774032 (winner) > 1398958719760588 (loser)
+     Reason: Inscribed in block 796121 (before block 796292)
+
+  9. Block 322948:
+     Winner: REPO1
+     ID: cf9d7886707846e40e30f8a33c6b046c595d659fe96d0bfc42e52c30d723cdd5i0
+     Sats: 1474933429770644 (winner) > 1493460708781045 (loser)
+     Reason: Inscribed in block 796097 (before block 796190)
+
+ 10. Block 323293:
+     Winner: REPO1
+     ID: e53c6894158192e073b65305fc70f5e060969004155f9d4678395d53b1781643i0
+     Sats: 1199296510682986 (winner) > 1196443998738570 (loser)
+     Reason: Inscribed in block 796026 (before block 796123)
+
+ 11. Block 436554:
+     Winner: REPO1
+     ID: 4adf4db3eb59be8866653b86d336572d2a98c10ab391136d2a56c8a63cf89d87i0
+     Sats: 1868079895652999 (winner) > 1862117649439428 (loser)
+     Reason: Inscribed in block 796121 (before block 796466)
+
+ 12. Block 456545:
+     Winner: REPO1
+     ID: b050946be8c65725eea3b13774809ee1b05f09e4b143b464d341dfa49b555e03i0
+     Sats: 579474203899445 (winner) > 579474204227886 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 13. Block 457544:
+     Winner: REPO1
+     ID: 36128ab98dab4ed2f5ae376e026bba14f933c28f897f1a740f8a94db1a8260f2i0
+     Sats: 579474203897180 (winner) > 579474204225481 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 14. Block 458543:
+     Winner: REPO1
+     ID: a4b89e8a93c7bc14f7a58226498fc0d3e166a724201c107760eec2c07254692di0
+     Sats: 579474203894915 (winner) > 579474204223076 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 15. Block 460541:
+     Winner: REPO1
+     ID: 9b4e736f17225336174504efff0b9916fad0d2f077a8fff9833b13292b3cdcaei0
+     Sats: 579474203890385 (winner) > 579474204220671 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 16. Block 461540:
+     Winner: REPO1
+     ID: 01ae861313e2531db5fbfca127ba41c33c4a6c73f7001ad9704f3f1fc7cd0b80i0
+     Sats: 579474203888120 (winner) > 579474204218266 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 17. Block 462539:
+     Winner: REPO1
+     ID: e8755c8d8b0b6ff8ab6ebce002cdbb6fe6fdd4aca82de91282ad9cb99d3c6d43i0
+     Sats: 579474203885855 (winner) > 579474204215861 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 18. Block 463538:
+     Winner: REPO1
+     ID: 366a553b8e6ae561ef0e6c628bd784b2ed8575482d9aae6476e2418977c5a41ai0
+     Sats: 579474203883590 (winner) > 579474204213456 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 19. Block 464537:
+     Winner: REPO1
+     ID: 967227a6bf5b8ecce2a56dbd2803f4766badbca9507adcc1fe57a0d670aa0edai0
+     Sats: 579474203881325 (winner) > 579474204211051 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 20. Block 465536:
+     Winner: REPO1
+     ID: cb9c238aaef9b69f1f5df68443232fdbe312f330e346f83a97c137c1049aefbdi0
+     Sats: 579474203879060 (winner) > 579474204208646 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 21. Block 466535:
+     Winner: REPO1
+     ID: 24520383c3aa7fcc96a82d68ff7bd44f2a396d8cfbe65a5c12c5c6e5909cab47i0
+     Sats: 579474203876795 (winner) > 579474204206241 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 22. Block 467534:
+     Winner: REPO1
+     ID: 567c2cdd04531e82a2c07b2c0d15214ebc8a2039a6c31c805f05d971c39f7058i0
+     Sats: 579474203874530 (winner) > 579474204203836 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 23. Block 468533:
+     Winner: REPO1
+     ID: c9b2c2f8a35a79a851e16fa4d851203d16a01d60a2c1bf3a62c0877beadceda5i0
+     Sats: 579474203872265 (winner) > 579474204201431 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 24. Block 470531:
+     Winner: REPO1
+     ID: 702fa669c37d5fd6145236d240f3e98e99740faedd4c4349d3063418f86c7a57i0
+     Sats: 579474203867735 (winner) > 579474204199026 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 25. Block 471530:
+     Winner: REPO1
+     ID: 78e3744ade8d1a685b76fa86f3ace08c19d4d95e7f5e8e366b756ea2b2da1ac4i0
+     Sats: 579474203867186 (winner) > 579474204196621 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 26. Block 472529:
+     Winner: REPO1
+     ID: 80c12373943aa4aa24b51da1b66684622eef0fac666d9495ca358676e9ea70e1i0
+     Sats: 579474203849273 (winner) > 579474204194216 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 27. Block 473528:
+     Winner: REPO1
+     ID: ff4c6f521c1c8e03419fd4b2008c892d622f60c75d960cd8f867ca6e3f81529bi0
+     Sats: 579474203847008 (winner) > 579474204191811 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 28. Block 474527:
+     Winner: REPO1
+     ID: 4cc8e77a1775420d042c723ebde3b215b7cd0344ad7baba2e3773901ccdeb8cei0
+     Sats: 579474203844743 (winner) > 579474204191265 (loser)
+     Reason: Inscribed in block 795134 (before block 795138)
+
+ 29. Block 475526:
+     Winner: REPO1
+     ID: 6389f78fff0a16ce98ca00b6166ff6789f7adb822f0b99595b42e5595a0799dei0
+     Sats: 579474203842478 (winner) > 579474204171908 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 30. Block 476525:
+     Winner: REPO1
+     ID: 908a71bcb5782d2ebe36fc6ae86593471189b4eef33d34c1c336734fb54d9d8ei0
+     Sats: 579474203840213 (winner) > 579474204169503 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 31. Block 477524:
+     Winner: REPO1
+     ID: 50a47a47d0324351e46b9cb41d54154be52f46e66f2898bdff58b50ba70f273ci0
+     Sats: 579474203837948 (winner) > 579474204075045 (loser)
+     Reason: Inscribed in block 795132 (before block 795142)
+
+ 32. Block 478523:
+     Winner: REPO1
+     ID: fdac66897c530f99a26e9391932174de77af45e61e4764cbd3c6209b99e67695i0
+     Sats: 579474203835683 (winner) > 579474204072640 (loser)
+     Reason: Inscribed in block 795132 (before block 795142)
+
+ 33. Block 479522:
+     Winner: REPO1
+     ID: f41933f39d7a8d70d647f3389a9cffd0c27e4d30d1b320372ebe2458751bf04bi0
+     Sats: 579474203833418 (winner) > 579474204070235 (loser)
+     Reason: Inscribed in block 795132 (before block 795142)
+
+ 34. Block 480521:
+     Winner: REPO1
+     ID: 107e542be413a47745c125ef3ac54ccb8ae29eb5679c085bfcf7982743cbf236i0
+     Sats: 579474203831153 (winner) > 579474204067830 (loser)
+     Reason: Inscribed in block 795131 (before block 795142)
+
+ 35. Block 481520:
+     Winner: REPO1
+     ID: 48bc1361ace4aaefe72513a40c8d565ccd887a2df13e7e37565e543ed7450206i0
+     Sats: 579474203828888 (winner) > 579474204065425 (loser)
+     Reason: Inscribed in block 795131 (before block 795142)
+
+ 36. Block 482519:
+     Winner: REPO1
+     ID: acbc06f84e3a45e567c12eb8a1f056e0271e0f4e8bc990ceb7c7844a66ced1e6i0
+     Sats: 579474203826623 (winner) > 579474204063020 (loser)
+     Reason: Inscribed in block 795131 (before block 795142)
+
+ 37. Block 483518:
+     Winner: REPO1
+     ID: fcf8295e18a48146e70cb3671ee11ced228122e99eba678ee5fcfede542845e2i0
+     Sats: 579474203824358 (winner) > 579474204060615 (loser)
+     Reason: Inscribed in block 795131 (before block 795142)
+
+ 38. Block 484517:
+     Winner: REPO1
+     ID: 2d3dae7897b53d4997388785ad23beec028eb3ec78468934687c407722e10ab8i0
+     Sats: 579474203822093 (winner) > 579474204058210 (loser)
+     Reason: Inscribed in block 795131 (before block 795142)
+
+ 39. Block 516485:
+     Winner: REPO1
+     ID: db54d5d14afbecbbf99f76b586b5b441fa820e4404e677985310874c7bc0e9c9i0
+     Sats: 579474203940557 (winner) > 579474204040829 (loser)
+     Reason: Inscribed in block 795134 (before block 795136)
+
+ 40. Block 517484:
+     Winner: REPO1
+     ID: a7c6d0065110506b4a24e9348a95a821bf2b8acd595c77ae415aceaed2b43222i0
+     Sats: 579474203942822 (winner) > 579474204041375 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 41. Block 518483:
+     Winner: REPO1
+     ID: f5e3da40771c59b2ed012f4a4bf0aa894b13891028ba266a31e65d57cc9e6428i0
+     Sats: 579474203945087 (winner) > 579474204043780 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 42. Block 519482:
+     Winner: REPO1
+     ID: 8f316cff8536827af74273c439d23733fabb3ac72545005071313b05c8da4641i0
+     Sats: 579474203947352 (winner) > 579474204046185 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 43. Block 520481:
+     Winner: REPO1
+     ID: 0222b4a3fb7542da84fbd48e4863b45ef55453bb33d365bc0edeb50a0c491592i0
+     Sats: 579474203949617 (winner) > 579474204048590 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 44. Block 521480:
+     Winner: REPO1
+     ID: b345abbf9b492f1868fbf07033ec3151ea1b601472cc658c24eb4ef1b5145c64i0
+     Sats: 579474203951882 (winner) > 579474204050995 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 45. Block 522479:
+     Winner: REPO1
+     ID: 759068960a47c76bfc612b3f58a4548bfccd6d7965beedf284cc1d829ba0db82i0
+     Sats: 579474203954147 (winner) > 579474204053400 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 46. Block 523478:
+     Winner: REPO1
+     ID: b1b440a1f578da47582c72afa38f834bf9fd39b1f8653c241179cec55dccfe7di0
+     Sats: 579474203956412 (winner) > 579474204055805 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 47. Block 524477:
+     Winner: REPO1
+     ID: f124b663a68f47fa7b1c587a5a8fd75fdf809a41c02a7b0b120cf5a7a25d21aei0
+     Sats: 579474203958677 (winner) > 579474204077450 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 48. Block 525476:
+     Winner: REPO1
+     ID: c9b03f50e9a0555efdf5064db3a7e81b25de4a44db1ad70155b9b7142d41c335i0
+     Sats: 579474203960942 (winner) > 579474204079855 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 49. Block 526475:
+     Winner: REPO1
+     ID: 2c8afb74abe020d5a11ce41550eec6d6370a780ec72cdbed7feb5c1a3db5d626i0
+     Sats: 579474203963207 (winner) > 579474204082260 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 50. Block 527474:
+     Winner: REPO1
+     ID: 427ec732fcd083b58e1d518a18a2665d50e67e5438a8767988537488eb6c00a4i0
+     Sats: 579474203965472 (winner) > 579474204084665 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 51. Block 528473:
+     Winner: REPO1
+     ID: 73db63b4f0b5d94ee9f4644c4e81719105bdf7d0d6230daec5a76194ed05b558i0
+     Sats: 579474203967737 (winner) > 579474204087070 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 52. Block 529472:
+     Winner: REPO1
+     ID: 7b5e8fb3e943c1241f05bc8634a4e3a659ec476c292601263613e04d9c67c8b7i0
+     Sats: 579474203970002 (winner) > 579474204089475 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 53. Block 530471:
+     Winner: REPO1
+     ID: 0d18d1eb8bea039d8fe32a84257db4a3b28e004147d52f2f011c16146984ca8ei0
+     Sats: 579474203972267 (winner) > 579474204091880 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 54. Block 531470:
+     Winner: REPO1
+     ID: 8e1d2f5725c648f49150ceb6e9fcb95335c971ac362525ec0a4e1fd9cfd22c80i0
+     Sats: 579474203974532 (winner) > 579474204094285 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 55. Block 532469:
+     Winner: REPO1
+     ID: 79b383c21e9f2c9eba820f15425e45aa65f8b50ef230fcaca1db326e902613f8i0
+     Sats: 579474203976797 (winner) > 579474204096690 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 56. Block 533468:
+     Winner: REPO1
+     ID: a5fb7ae620f54f195c4827636b64deb5b1ba01b9ea74b22f68d9bc9434965961i0
+     Sats: 579474203979062 (winner) > 579474204116047 (loser)
+     Reason: Inscribed in block 795134 (before block 795138)
+
+ 57. Block 534467:
+     Winner: REPO1
+     ID: 5f1d4072201a29344038381dc403df7ee75b691233e7dd7089db4588f12b0fffi0
+     Sats: 579474203981327 (winner) > 579474204116593 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 58. Block 535466:
+     Winner: REPO1
+     ID: e4b9d3e9a4ffe682ee46d5643833e520026069b6a592bc2bb5eedf4afc7a77d9i0
+     Sats: 579474203983592 (winner) > 579474204118998 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 59. Block 536465:
+     Winner: REPO1
+     ID: d931532da0226c5dce0e323483d749c4f1e2b943b0d57aa08c9ee5de4cbb2c4bi0
+     Sats: 579474203985857 (winner) > 579474204121403 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 60. Block 537464:
+     Winner: REPO1
+     ID: 68589b2ac221145f61a18d1a8a8da30f39a90673887e0c3ebe4ecf606b0965aai0
+     Sats: 579474203988122 (winner) > 579474204123808 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 61. Block 538463:
+     Winner: REPO1
+     ID: 8ec053bc67afee495a0e551ebd93c8b1b4ffeb2dfa170ca347d7e3d7f08f68a8i0
+     Sats: 579474203990387 (winner) > 579474204126213 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 62. Block 539462:
+     Winner: REPO1
+     ID: 98310f530c2b93d73ee7ed706a10e5e7bf463700eb3a84280c7bf807a9e2a923i0
+     Sats: 579474204008300 (winner) > 579474204128618 (loser)
+     Reason: Inscribed in block 795133 (before block 795142)
+
+ 63. Block 540461:
+     Winner: REPO1
+     ID: 052a4d2752a1a8930f8dc1fcb4c40a53005466082d468e3801be764a12cd504di0
+     Sats: 579474204008849 (winner) > 579474204131023 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 64. Block 541460:
+     Winner: REPO1
+     ID: 9f9ac482ff522861d2c36904ba9f9a07886dfcf85d584937fea9e8855d3c7035i0
+     Sats: 579474204011114 (winner) > 579474204133428 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 65. Block 542459:
+     Winner: REPO1
+     ID: 9d164bbea566479d3d8c1e6a54135bc37cba3b664b6c00bcb126b8350888a4ffi0
+     Sats: 579474204013379 (winner) > 579474204135833 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 66. Block 543458:
+     Winner: REPO1
+     ID: d0e417a1102c8dd3863b85725ec86ef4c745fbd611fa2df84afb66bac223b081i0
+     Sats: 579474204015644 (winner) > 579474204138238 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 67. Block 544457:
+     Winner: REPO1
+     ID: 4994f9665870464ee16b7d6646970372bd42fbbe4bd3b11d223dd57c0622f21ai0
+     Sats: 579474204017909 (winner) > 579474204140643 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 68. Block 545456:
+     Winner: REPO1
+     ID: 526b684ef9cfd241acffdae25a48ab3477cb9d31b3ceb2ccf5424c01c7e133c2i0
+     Sats: 579474204020174 (winner) > 579474204143048 (loser)
+     Reason: Inscribed in block 795134 (before block 795142)
+
+ 69. Block 565967:
+     Winner: REPO1
+     ID: fb339d2adb349b574231787fa8f4a710ebad5777dc8f1f1d01f4b5bbe5dce8f5i0
+     Sats: 1238902561573011 (winner) > 1257479856621130 (loser)
+     Reason: Inscribed in block 796099 (before block 796514)
+
+ 70. Block 586558:
+     Winner: REPO1
+     ID: 9f6a3e63ce608260426e529bfcd5f40e6d3316995f9fb556ee46cc9da86a81d9i0
+     Sats: 1211139328287254 (winner) > 1217726341870692 (loser)
+     Reason: Inscribed in block 796116 (before block 796470)
+
+ 71. Block 593080:
+     Winner: REPO1
+     ID: a0e7ad7b4a25b4bb275d9d0fde1a77153a918bd62632887e9db28fe4d2277271i0
+     Sats: 1870216505881313 (winner) > 1865936471885626 (loser)
+     Reason: Inscribed in block 796113 (before block 796461)
+
+ 72. Block 637087:
+     Winner: REPO1
+     ID: 5ab96895db4af042bd2ba7e4b527606601227d948aa2cbb595baa01e965f32d7i0
+     Sats: 1905842961214614 (winner) > 1905004836945788 (loser)
+     Reason: Inscribed in block 796121 (before block 796509)
+
+ 73. Block 682460:
+     Winner: REPO1
+     ID: b1937aa360c51c0aa7ea1d9dcd14477269ef08c72c3c7738f536f95ac65d6ff6i0
+     Sats: 1905842957018064 (winner) > 1909093681327196 (loser)
+     Reason: Inscribed in block 796097 (before block 796474)
+
+ 74. Block 710811:
+     Winner: REPO1
+     ID: a4a379bd156513e620ef1fcb5a1250f4060cc6675df22f2433c62b2d9739952ei0
+     Sats: 828023228861817 (winner) > 807997882791635 (loser)
+     Reason: Inscribed in block 796112 (before block 796251)
+
+ 75. Block 712003:
+     Winner: REPO1
+     ID: f05795d84302c1a5985c4add4ffe924a7a74873876ded002091d708a412a05b7i0
+     Sats: 1679706630283422 (winner) > 1679341235465370 (loser)
+     Reason: Inscribed in block 795075 (before block 795078)
+
+════════════════════════════════════════════════════════════════════════════════
+Report: True Bitmap Resolver
+Timestamp: 2025-11-21T13:34:10.297Z
+════════════════════════════════════════════════════════════════════════════════
