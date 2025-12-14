@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 
 /* A script to validate the true FiF winner of conflicting bitmap
 registries. Uses Blockstream API to get transaction and block data to
@@ -19,9 +19,9 @@ import { RegistryComparator } from './validator.mjs';
 const httpsAgent = new https.Agent({
     keepAlive: true,
     keepAliveMsecs: 30000,
-    maxSockets: 50,           // Allow up to 50 concurrent connections
-    maxFreeSockets: 10,       // Keep 10 idle sockets ready
-    timeout: 30000            // 30 second timeout per request
+    maxSockets: 50,
+    maxFreeSockets: 10,
+    timeout: 30000
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -30,7 +30,7 @@ const __dirname = dirname(__filename);
 import dotenv from 'dotenv';
 
 // Load environment variables
-dotenv.config({ path: path.join(__dirname, '.env') }); // This would be Mempool or Blockstream API tokens if needed
+dotenv.config({ path: path.join(__dirname, 'thebitmaptoshi.env') });
 
 // ANSI color codes
 const colors = {
@@ -47,11 +47,9 @@ const colors = {
 
 class TrueBitmapResolver {
     constructor() {
-        // Always use canonical base, don't embed credentials in URL
         this.blockstreamBase = 'https://blockstream.info/api';
-        this.blockstreamAuthHeader = null; // set if credentials available
+        this.blockstreamAuthHeader = null;
 
-        // Read env now (dotenv already called at top); allow refresh later
         this.refreshBlockstreamAuth();
 
         if (this.blockstreamAuthHeader) {
@@ -71,13 +69,11 @@ class TrueBitmapResolver {
             { name: 'blockstream', baseUrl: this.blockstreamBase, priority: 2 }
         ];
 
-        // Only track the primary APIs (mempool + blockstream with auth)
         this.requestCounters = {
             mempool: { count: 0, resetAt: Date.now() + 3600000 },
             blockstream: { count: 0, resetAt: Date.now() + 3600000 }
         };
 
-        // Lightweight verification flag to avoid repeated credential checks
         this._blockstreamVerified = false;
     }
 
@@ -130,7 +126,6 @@ class TrueBitmapResolver {
         const clientSecret = process.env.BLOCKSTREAM_CLIENT_SECRET;
 
         if (clientId && clientSecret) {
-            // Use Basic auth header rather than embedding credentials in URL
             const token = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
             this.blockstreamAuthHeader = `Basic ${token}`;
         } else {
@@ -145,7 +140,6 @@ class TrueBitmapResolver {
 
         try {
             const url = `${this.blockstreamBase}/blocks/tip/height`;
-            // Use fetchJSON which accepts headers to avoid dependency on fetchJSONWithRetry binding
             const headers = { Authorization: this.blockstreamAuthHeader };
             await this.fetchJSON(url, 3, headers);
             this._blockstreamVerified = true;
@@ -192,7 +186,7 @@ class TrueBitmapResolver {
                         }
 
                         res.on('data', chunk => data += chunk);
-                        res.on('end', () => resolve(data.trim()));  // Return plain text
+                        res.on('end', () => resolve(data.trim()));
                     }).on('error', reject);
                 });
             } catch (error) {
@@ -205,7 +199,6 @@ class TrueBitmapResolver {
 
     // Smart API routing - use ONE endpoint until exhausted, THEN move to next
     async fetchFromAPI(endpoint, txidOrHash, apiType = 'tx') {
-        // Primary APIs only (sequential exhaustion)
         const primaryApis = [
             { name: 'mempool', builder: (e, t) => `https://mempool.space/api/tx/${t}` },
             { name: 'blockstream', builder: (e, t) => `${this.blockstreamBase}/${apiType}/${t}` }
@@ -219,7 +212,6 @@ class TrueBitmapResolver {
             const url = api.builder(endpoint, txidOrHash);
 
             try {
-                // Refresh auth header for blockstream
                 if (api.name === 'blockstream') {
                     this.refreshBlockstreamAuth();
                     if (this.blockstreamAuthHeader && !this._blockstreamVerified) {
@@ -244,7 +236,6 @@ class TrueBitmapResolver {
 
                 counter.count++;
 
-                // Call API and return
                 const data = await this.fetchJSONWithRetry(url, api.name);
                 console.log(`${colors.dim}  [${api.name}] ${counter.count}/${this.apiSources[i].limit} requests used${colors.reset}`);
                 return { api: api.name, data };
@@ -252,7 +243,6 @@ class TrueBitmapResolver {
             } catch (error) {
                 lastError = error;
 
-                // If rate limited or 429, mark as exhausted
                 if (error.message.includes('429') || error.message.toLowerCase().includes('rate')) {
                     const counter = this.requestCounters[api.name];
                     counter.exhausted = true;
@@ -261,7 +251,6 @@ class TrueBitmapResolver {
                     continue;
                 }
 
-                // If blockstream 401, retry unauthenticated once
                 if (api.name === 'blockstream' && error.message.includes('401')) {
                     try {
                         this.blockstreamAuthHeader = null;
@@ -290,30 +279,43 @@ class TrueBitmapResolver {
         try {
             console.log(`${colors.dim}  Fetching tx data for ${txid.substring(0, 16)}...${colors.reset}`);
 
-            // Use smart API router which returns { api, data }
             const result = await this.fetchFromAPI('tx', txid, 'tx');
             const txApi = result.api;
             const txDataRaw = result.data;
 
-            // Normalize to { status: { block_height, block_hash } }
             let normalized = null;
+            let blockHeight = null;
+            let blockHash = null;
 
-            if (txApi === 'blockstream' || txApi === 'mempool') {
-                // These APIs typically follow Blockstream-like shape
-                normalized = txDataRaw;
+            // Handle different API response formats
+            if (txApi === 'mempool') {
+                // Mempool format: { status: { block_height, block_hash } }
+                if (txDataRaw && txDataRaw.status) {
+                    blockHeight = txDataRaw.status.block_height;
+                    blockHash = txDataRaw.status.block_hash;
+                    normalized = { status: { block_height: blockHeight, block_hash: blockHash } };
+                }
+            } else if (txApi === 'blockstream') {
+                // Blockstream format: { status: { block_height, block_hash } }
+                if (txDataRaw && txDataRaw.status) {
+                    blockHeight = txDataRaw.status.block_height;
+                    blockHash = txDataRaw.status.block_hash;
+                    normalized = { status: { block_height: blockHeight, block_hash: blockHash } };
+                }
             } else if (txApi === 'blockchair') {
                 // Blockchair: { data: { '<txid>': { transaction: { block_id, block_hash } } } }
                 const entry = txDataRaw && txDataRaw.data && txDataRaw.data[txid];
                 if (entry && entry.transaction) {
-                    normalized = { status: { block_height: entry.transaction.block_id || null, block_hash: entry.transaction.block_hash || entry.transaction.block_id }};
+                    blockHeight = entry.transaction.block_id || null;
+                    blockHash = entry.transaction.block_hash || null;
+                    normalized = { status: { block_height: blockHeight, block_hash: blockHash } };
                 }
             } else if (txApi === 'blockchaininfo') {
                 // blockchain.info rawtx: { block_height?, hash?, block_index? }
-                const b = txDataRaw;
-                if (b) {
-                    const bh = b.block_height || b.block_height === 0 ? b.block_height : null;
-                    const bhash = b.block_hash || b.hash || null;
-                    normalized = { status: { block_height: bh, block_hash: bhash } };
+                if (txDataRaw) {
+                    blockHeight = (txDataRaw.block_height || txDataRaw.block_height === 0) ? txDataRaw.block_height : null;
+                    blockHash = txDataRaw.block_hash || txDataRaw.hash || null;
+                    normalized = { status: { block_height: blockHeight, block_hash: blockHash } };
                 }
             }
 
@@ -322,64 +324,68 @@ class TrueBitmapResolver {
                 return { blockHeight: null, blockPosition: null };
             }
 
-            const blockHeight = normalized.status.block_height;
-            const blockHash = normalized.status.block_hash;
+            blockHeight = normalized.status.block_height;
+            blockHash = normalized.status.block_hash;
 
             if (!blockHeight || !blockHash) {
                 console.warn(`${colors.yellow}  Warning: Unconfirmed transaction ${txid}${colors.reset}`);
                 return { blockHeight: null, blockPosition: null };
             }
 
-            console.log(`${colors.dim}  Inscription in Bitcoin block ${blockHeight}${colors.reset}`);
+            if (!/^[a-f0-9]{64}$/i.test(blockHash)) {
+                console.warn(`${colors.red}  ⚠️ INVALID BLOCK HASH FORMAT: ${blockHash}${colors.reset}`);
+                return { blockHeight: null, blockPosition: null };
+            }
 
-            const cacheKey = `${blockHeight}`;
+            // 🔴 Log clean hash format
+            console.log(`${colors.dim}  Block height: ${blockHeight}, Block hash: ${blockHash}${colors.reset}`);
+
+            const cacheKey = `${blockHeight}:${blockHash}`;
             let txList;
 
             if (this.blockCache.has(cacheKey)) {
                 txList = this.blockCache.get(cacheKey);
+                console.log(`${colors.dim}  Using cached txids for block ${blockHeight}${colors.reset}`);
             } else {
-                // Use mempool -> blockstream -> blockchair -> blockchain.info for block txids
+                // Define all URLs upfront - try block HEIGHT first, then hash
+                const blockUrlByHeight = `https://mempool.space/api/block-height/${blockHeight}/txids`;
                 const blockUrl = `https://mempool.space/api/block/${blockHash}/txids`;
-                const blockstreamUrl = `${this.blockstreamBase}/block/${blockHash}/txids`;
-                const blockchairUrl = `https://api.blockchair.com/bitcoin/dashboards/block/${blockHash}`;
-                const blockchainInfoUrl = `https://blockchain.info/rawblock/${blockHash}`;
-
+                const blockstreamUrl = `${this.blockstreamBase}/block/${blockHeight}/txids`;
+                const blockchainInfoUrl = `https://blockchain.info/block-height/${blockHeight}?format=json`;
+                
                 try {
-                    txList = await this.fetchJSONWithRetry(blockUrl, 'mempool');
-                } catch (mempoolError) {
-                    console.warn(`${colors.yellow}  Mempool block txids failed, trying Blockstream...${colors.reset}`);
+                    const resp = await this.fetchJSONWithRetry(blockUrl, 'mempool');
+                    if (Array.isArray(resp)) {
+                        txList = resp;
+                    } else {
+                        throw new Error('Unexpected Mempool response format');
+                    }
+                } catch (mempoolHashError) {
+                    console.warn(`${colors.yellow}  Mempool (by hash) failed: ${mempoolHashError.message}, trying Blockstream...${colors.reset}`);
                     try {
-                        txList = await this.fetchJSONWithRetry(blockstreamUrl, 'blockstream');
+                        const resp = await this.fetchJSONWithRetry(blockstreamUrl, 'blockstream');
+                        if (Array.isArray(resp)) {
+                            txList = resp;
+                        } else {
+                            throw new Error('Unexpected Blockstream response format');
+                        }
                     } catch (blockstreamError) {
-                        console.warn(`${colors.yellow}  Blockstream block txids failed, trying Blockchair...${colors.reset}`);
+                        console.warn(`${colors.yellow}  Blockstream failed: ${blockstreamError.message}, trying Blockchain.info...${colors.reset}`);
                         try {
-                            const bcResp = await this.fetchJSONWithRetry(blockchairUrl, 'blockchair');
-                            // Blockchair response: { data: { '<blockHash>': { transactions: [...] } } }
-                            const key = Object.keys(bcResp && bcResp.data || {})[0];
-                            if (bcResp && bcResp.data && key && Array.isArray(bcResp.data[key].transactions)) {
-                                txList = bcResp.data[key].transactions;
+                            const biResp = await this.fetchJSONWithRetry(blockchainInfoUrl, 'blockchaininfo');
+                            if (biResp && biResp.blocks && biResp.blocks[0] && Array.isArray(biResp.blocks[0].tx)) {
+                                txList = biResp.blocks[0].tx.map(t => t.hash || t.txid || t.hash_big_endian || null).filter(Boolean);
                             } else {
-                                throw new Error('Invalid Blockchair block response');
+                                throw new Error('Invalid Blockchain.info block response');
                             }
-                        } catch (blockchairError) {
-                            console.warn(`${colors.yellow}  Blockchair block txids failed, trying Blockchain.info...${colors.reset}`);
-                            try {
-                                const biResp = await this.fetchJSONWithRetry(blockchainInfoUrl, 'blockchaininfo');
-                                // blockchain.info rawblock: { tx: [ { hash: '...' }, ... ] }
-                                if (biResp && Array.isArray(biResp.tx)) {
-                                    txList = biResp.tx.map(t => t.hash || t.txid || t.hash_big_endian || null).filter(Boolean);
-                                } else {
-                                    throw new Error('Invalid Blockchain.info block response');
-                                }
-                            } catch (blockchainError) {
-                                throw new Error(`All block txid APIs failed: mempool=${mempoolError.message}, blockstream=${blockstreamError ? blockstreamError.message : 'n/a'}, blockchair=${blockchairError ? blockchairError.message : 'n/a'}, blockchain=${blockchainError.message}`);
-                            }
+                        } catch (blockchainError) {
+                            throw new Error(`All block txid APIs failed: mempool=${mempoolHashError.message}, blockstream=${blockstreamError.message}, blockchain=${blockchainError.message}`);
                         }
                     }
                 }
 
                 if (!Array.isArray(txList) || txList.length === 0) {
-                    throw new Error(`Invalid txids response for block ${blockHash}`);
+                    throw new Error(`Invalid txids response for block ${blockHeight}`);
                 }
 
                 this.blockCache.set(cacheKey, txList);
@@ -389,7 +395,9 @@ class TrueBitmapResolver {
             const position = txList.indexOf(txid);
 
             if (position === -1) {
-                console.warn(`${colors.yellow}  Warning: txid not found in block ${blockHeight}${colors.reset}`);
+                console.warn(`${colors.yellow}  ⚠️ TXID NOT FOUND in ${txList.length} transactions!${colors.reset}`);
+                console.warn(`${colors.yellow}    Looking for: ${txid}${colors.reset}`);
+                console.warn(`${colors.yellow}    First 3 txids in block: ${txList.slice(0, 3).join(', ')}${colors.reset}`);
                 return { blockHeight, blockPosition: null };
             }
 
@@ -429,6 +437,13 @@ class TrueBitmapResolver {
         if (!txid1 || !txid2) {
             return { block, winner: 'UNKNOWN', inscriptionId: null, reason: 'Invalid inscription format' };
         }
+
+
+        // DIAGNOSTIC: Log inscription IDs and extracted txids
+        console.log(`${colors.cyan}  Repo1 ID: ${repo1Id}${colors.reset}`);
+        console.log(`${colors.cyan}  Extracted Repo1 txid: ${txid1}${colors.reset}`);
+        console.log(`${colors.cyan}  Repo2 ID: ${repo2Id}${colors.reset}`);
+        console.log(`${colors.cyan}  Extracted Repo2 txid: ${txid2}${colors.reset}`);
 
         console.log(`${colors.cyan}Resolving bitmap ${block}.bitmap competition...${colors.reset}`);
         
@@ -677,11 +692,9 @@ class TrueBitmapResolver {
                 console.log(`${colors.dim}  Searching for inscription on sat ${satNumber}...${colors.reset}`);
                 await this.sleep(this.rateLimitDelay);
                 
-                // Use ordinals.com JSON API endpoint for sat data
                 const satUrl = `https://ordinals.com/r/sat/${satNumber}`;
                 const response = await this.fetchJSON(satUrl);
                 
-                // Response format: { ids: ["inscription_id1", "inscription_id2", ...] }
                 if (!response || !response.ids || response.ids.length === 0) {
                     console.log(`${colors.dim}  No inscriptions found on sat ${satNumber}${colors.reset}`);
                     return null;
@@ -732,14 +745,9 @@ class TrueBitmapResolver {
                 console.log(`${colors.dim}  Fetching satoshi for inscription ${inscriptionId.substring(0, 16)}...${colors.reset}`);
                 await this.sleep(this.rateLimitDelay);
                 
-                // Use ordinals.com inscription endpoint
                 const inscriptionUrl = `https://ordinals.com/inscription/${inscriptionId}`;
-                
-                // Fetch HTML page (ordinals.com doesn't have a JSON API for this)
                 const htmlContent = await this.fetchText(inscriptionUrl);
                 
-                // Parse sat number from HTML
-                // Look for pattern: <dt>sat</dt><dd><a href="/sat/1234567890">1234567890</a></dd>
                 const satMatch = htmlContent.match(/<dt>sat<\/dt>\s*<dd>(?:<a[^>]*>)?(\d+)(?:<\/a>)?<\/dd>/i);
                 
                 if (!satMatch) {
@@ -772,8 +780,6 @@ class TrueBitmapResolver {
                     const headers = { 'User-Agent': 'True-Bitmap-Resolver/1.0' };
                     if (apiName === 'blockstream' && this.blockstreamAuthHeader) {
                         headers['Authorization'] = this.blockstreamAuthHeader;
-                        // small debug: note when auth header is used
-                        console.log(`${colors.dim}  Using Blockstream Authorization header${colors.reset}`);
                     }
 
                     https.get(url, { headers, agent: httpsAgent }, (res) => {
@@ -784,7 +790,6 @@ class TrueBitmapResolver {
                         }
 
                         if (res.statusCode === 401 && apiName === 'blockstream') {
-                            // invalid credentials: clear cached header and fail fast so caller can retry unauthenticated
                             console.warn(`${colors.yellow}  Blockstream returned 401 - clearing cached credentials${colors.reset}`);
                             this.blockstreamAuthHeader = null;
                             this._blockstreamVerified = false;
@@ -857,7 +862,6 @@ class TrueBitmapResolver {
         report += `Neither Found: ${stats.neither}\n`;
         report += `Unknown: ${stats.unknown}\n\n`;
 
-        // NEW SECTION: Grouped blocks by winner in 4 columns
         report += '─'.repeat(80) + '\n';
         report += '  BLOCKS BY WINNER (4 COLUMNS)\n';
         report += '─'.repeat(80) + '\n\n';
@@ -891,9 +895,8 @@ class TrueBitmapResolver {
 
             report += `${category.label} (${blocks.length} blocks):\n`;
 
-            // Format into 4 columns
             const columns = 4;
-            const colWidth = 18; // Width per column (e.g., "123456  ")
+            const colWidth = 18;
             const rows = Math.ceil(blocks.length / columns);
 
             for (let row = 0; row < rows; row++) {
@@ -968,10 +971,9 @@ class TrueBitmapResolver {
                 return;
             }
 
-            // Step 2: Resolve each conflict with rate limiting
             console.log(`${colors.bright}Step 2: Resolving conflicts via mempool.space (primary) + Blockstream (fallback)...${colors.reset}`);
             const results = [];
-            const rateLimitDelay = 10; // 10ms between API calls
+            const rateLimitDelay = 10;
             
             for (let i = 0; i < conflicts.length; i++) {
                 const progress = `[${i + 1}/${conflicts.length}]`;
@@ -1012,7 +1014,6 @@ class TrueBitmapResolver {
             console.log(`${colors.green}📄 Report: ${filename}${colors.reset}`);
             console.log(`${colors.dim}   Path: ${outputPath}${colors.reset}\n`);
 
-            // Stats
             const stats = {
                 repo1: results.filter(r => r.winner === 'REPO1').length,
                 repo2: results.filter(r => r.winner === 'REPO2').length
