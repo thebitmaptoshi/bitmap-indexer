@@ -54,6 +54,7 @@ class RegistryComparator {
         this.suppressFileOutput = options.suppressFileOutput || false;
     }
 
+    
     // Detect if a path is local or remote URL
     isLocalPath(pathOrUrl) {
         return !pathOrUrl.startsWith('http://') && !pathOrUrl.startsWith('https://');
@@ -361,6 +362,7 @@ class RegistryComparator {
             
             // Fetch inscription IDs for all conflicts with validation
             console.log(`\n${colors.cyan}Fetching inscription IDs for ${allBlockConflicts.length} conflicts...${colors.reset}`);
+            
             const failedLookups = [];
             
             for (let i = 0; i < allBlockConflicts.length; i++) {
@@ -417,12 +419,12 @@ class RegistryComparator {
             return r.differences.some(d => d.type === 'BLOCK_CONFLICT' || d.type === 'CONFLICT');
         });
 
-                if (criticalFiles.length > 0) {
+        if (criticalFiles.length > 0) {
             report += '─'.repeat(80) + '\n';
             report += '  🚨 CRITICAL ISSUES - FILES WITH CONFLICTS\n';
             report += '─'.repeat(80) + '\n';
             
-            for (const result of criticalFiles) {  // ✅ Changed to for...of loop
+            for (const result of criticalFiles) {
                 const blockConflicts = result.differences.filter(d => d.type === 'BLOCK_CONFLICT');
                 const satConflicts = result.differences.filter(d => d.type === 'CONFLICT');
 
@@ -441,13 +443,6 @@ class RegistryComparator {
                         report += `       Repo2→ID: ${diff.repo2Id}\n`;
                     }
                 }
-                // Uncomment the following section to show sat conflicts (same sat, different blocks):
-                // if (satConflicts.length > 0) {
-                //     report += `  🔴 ${satConflicts.length} Sat conflicts (same sat, different blocks):\n`;
-                //     satConflicts.forEach(diff => {
-                //         report += `     Sat ${diff.sat}: Repo1→Block ${diff.file1Block}, Repo2→Block ${diff.file2Block}\n`;
-                //     });
-                // }
             }
             report += '\n';
         }
@@ -496,14 +491,6 @@ class RegistryComparator {
                         report += `    - Block ${diff.block}: Repo1→Sat ${diff.file1Sat}, Repo2→Sat ${diff.file2Sat}\n`;
                     });
                 }
-
-                // Uncomment the following section to show sat conflicts (same sat, different blocks):
-                // if (grouped.CONFLICT.length > 0) {
-                //     report += `\n  🔴 Sat Conflicts (${grouped.CONFLICT.length}):\n`;
-                //     grouped.CONFLICT.forEach(diff => {
-                //         report += `    - Sat ${diff.sat}: Repo1→Block ${diff.file1Block}, Repo2→Block ${diff.file2Block}\n`;
-                //     });
-                // }
 
                 // File1 only
                 if (grouped.FILE1_ONLY.length > 0) {
